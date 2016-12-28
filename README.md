@@ -1,259 +1,447 @@
-# 文件管理
-项目目的
-+ 熟悉文件存储空间的管理
-+ 熟悉文件的物理结构、目录结构和文件操作
-+ 熟悉文件系统管理实现
-+ 加深对文件系统内部功能和实现过程的理解
+# 设计模式
+## 重构思路
++ 我们的重构目标是**使得代码层类高内聚、低耦合，层级关系明确，层级的负责关系明确。关键类的代码量进行分离，最终使的代码易读，易维护，易拓展。**
 
-## 项目要求
-+ 在内存中开辟一个空间作为文件存储器，在其上实现一个简单的文件系统。退出这个文件系统时，需要该文件系统的内容保存到磁盘上，以便下次可以将其恢复到内存中来。
-+ 文件系统提供的操作：
-	+ 格式化
-	+ 创建子目录
-	+ 删除子目录
-	+ 显示目录
-	+ 更改当前目录
-	+ 创建文件
-	+ 打开文件
-	+ 关闭文件
-	+ 写文件
-	+ 读文件
-	+ 删除文件
+## 重构过程
+### 寻找发现项目问题
++ 我们重读了项目以后发现该项目中，类抽象粒度太低，很多本来应该在类中完成的方法被放在了类外去声明实现。导致项目的耦合度非常的高，一些关键的类中的代码量非常的大。并且项目中的分层非常不明确，导致数据流和界面放在了一起去写，关键类中的思路非常的混乱。所以我们之后准备对代码进行更细粒度的类的抽象和分层，先形成一个良好的代码结构。
++ 重构前的ViewLayer类
+	+ ![p1](../resource/p1.png)
++ 重构前的ViewLayer类的代码量
+	+ ![p2](../resource/p2.png)
++ 重构前的类图
+	+ ![p3](../resource/p3.png) 
 	
-## 项目实现
-### 开发环境
-**windows** + **VS2015** + **Cocos3.11**
-### 算法分析
-#### 设计理念
-  本项目当中使用<font color = red>**沙盒化**</font>的概念，启动程序后会在c盘下建立workRoom文件夹作为程序的工作文件夹。程序实际上模拟了操作系统当中对文件管理的各项操作。程序关闭时考虑到对用户使用安全的考虑，并没有对文件夹进行情况操作，所以**最好每次启动之前删除本地已有的c:\workRoom文件夹**。
-#### 文件目录结构
-  本项目中仅支持文件夹以及txt文件的建立，所以文件之间维护了文件夹与文件夹，文件夹与文件之间的结构。这里利用了<font color = red>**多叉树的数据结构**</font>，文件夹节点会储存该文件夹下的所有文件以及文件夹。因为是使用多叉树的结构，所以不支持多个文件夹共享一个文件夹或文件，并且在删除一个文件夹的时候，会删除掉这个节点以及它的所有叶子节点，即删除这个文件夹下的所有内容。
-  
-  在实现过程当中，我用**head数组**和**fileVec数组**来模拟链表完成多叉树的增加和删除操作。
-#### 文件索引
-  文件的内容索引利用了显示链接FTA技术，将指向所有地址的指针保存在**FTA数组**当中，可以方便的配合文件目录结构对文件进行访问、删除、新建操作。
-#### 内存管理
-  本项目中的内存分配使用了**最先适配算法**:
-  
-+ **算法思想：**按分区先后次序从头查找，找到符合要求的第一个分区。
-+ **算法实质：**尽可能利用存储区低地址空闲区，尽量在高地址部分保存较大空闲区，以便一旦有分配大空闲区要求时，容易得到满足
-+ **算法优点：**分配简单，合并相邻空闲区也比较容易
-+ **算法缺点：**查找总是从表首开始，前面空闲区往往被分割的很小，满足分配要求的可能性较小，查找次数较多。
+### 细粒度的类抽象和分层
++ 经过仔细思考以后，为了达到低耦合、高内聚、方便维护等的高质量代码。我们首先将数据流和界面拆分开，我们通过分析项目发现数据流主要是对一系列文件相关的类进行操作，并且有很多系统的数据结构一旦被创建需要在全局当中引用。所以我们主要将代码拆分为全局引用的**Static层**，由一些组件聚集的**View层**和控制数据流和模型的**File层**。
++ 之后再对File层中，通过对父级的**SystemFile类**的继承，抽象出更具体的**Folder类**和**Document类**。对**View层**中的Button组件进行重新的封装，因为项目当中不同功能的Button组件较多，所以对重新封装的**MyButton类**的继承，抽象出更具体的8种Button类。对Static层因为功能的不同，抽象出主要装载系统数据流的**System类**和主要装载系统View参数的**ViewSystem类**。
 
-实现的过程中，我设置了：
+### 添加设计模式
++ 在通过上一步的抽象分层后，代码形成了明确的层级关系，基本实现了层间低耦合，层内高内聚的特征。但是我们还发现有些部分的代码重用性很高，需要重新进行封装。类之间通过继承的关系来扩展类的功能很不灵活等原因。我们将引入一些设计模式来对代码进行二次的重构。
++ 设计模式的使用思路将在第三大点当中具体提到。
++ 重构后的ViewLayer类
+	+ ![p4](../resource/p4.png)
++ 重构后的ViewLayer类的代码量
+	+ ![p5](../resource/p5.png) 
++ 重构后的类图
+	+ ![p6](../resource/p6.png)
++ 重构后的结构图
+	+ ![p9](../resource/p9.png)  
 
-+ **freeMemoryArray数组 :** 储存空内存块
-+ **fileToNum数组 :** 该映射表用来储存这个文件在freeMemoryArray中的位置
-+ **增加文件时 :** 扫描freeMemoryArray数组，找到第一个能够存放该任务的空内存块。然后将其放入该内存块当中，freeMemoryArray数组的这个位置分解为两部分内存块，一部分为该任务所占据的内存块，一部分为剩下的空内存块。然后在视图区添加一个有色方块，并利用操作后的freeMemoryArray数组更新列表区。
-+ **删除文件时 :** <font color = red>在freeMemoryArray数组中从任务所在位置往前扫描找到第一个类型不为2的方块，如果这个类型不为2的方块的类型为0，这两个方块合并。再从任务所在位置往后扫描找到第一个类型不为2的方块，如果这个类型不为2的方块的类型为0，这两个方块合并。</font>
+## 设计模式
++ 工厂模式
+	+ 我们通过分析发现，File层的继承关系和View层的Button的继承关系，我们可以利用起来构造工厂。这样做的好处有两点：
+		+ **第一点** 是需要修改初始化代码的时候，我们只需要去修改具体的类的构造函数，不需要去多处实例化的代码中去修改，比较好维护。
+		+ **第二点** 是如果再添加继承父类的子类的时候，只需要添加一个类，然后去工厂里面添加一个生产过程就行，易于扩展。
+	+ File工厂类图
+		+ ![p7](../resource/p7.png)
+	+ Button工厂类图
+		+ ![p8](../resource/p8.png) 
++ 单例模式
+	+ 因为我们是使用的cocos2dx引擎，所以需要遵守它内部的一些机制，比如说一个Director不能被二次实例化等。CCDirector单例，它负责管理初始化OpenGL渲染窗口以及游戏场景的流程控制，它是cocos2dx游戏开发中必不可少的类之一。为什么要把此类设计成单例对象呢？因为，一个游戏只需要有一个游戏窗口就够了，所以，只需要初始化一次OpenGL渲染窗口。而且场景的流程控制功能，也只需要存在一个这样的场景控制对象即可。为了保证CCDirector类只存在一个实例对象，就必须使用单例模式。所以我们马上联想到了单例模式能够帮助我们方便的完成这些特性，所以我们选用了单例模式来实现一些继承Director类的子类的构造函数。 
++ 装饰器模式
+	+ 当我们发现一些关键类的功能越来越复杂，代码量越来越大的时候。我们想了一下可不可以不通过继承关系来对类进行拓展，然后我们就想到了装饰器模式。我们把类中的get、set以及重写父类的方法保留在类本身当中。将其他的拓展方法转移到类的装饰器中的方法来对类进行横向拓展。简化了一些关键类中的核心代码，更易于维护。
 
-#### 对本地的操作
-利用c++的system函数调用DOS命令对本地文件进行操作:
-
-+ **cd :** 打开文件(夹)
-+ **del :** 删除文件
-+ **rd :** 删除文件夹
-
-#### 具体实现
-
+## 重构后的代码
+### 全局System类
 ```C++
-
-class ViewLayer:
-	public Layer
+class System
 {
 private:
-	//剩余内存大小
-	int memoryLarge;
+	// 系统容积
+	static int memoryLarge;
+	// FTA
+	static int FTA[1000];
+	// 文件数组
+	static Vector<SystemFile*> fileVec;
+	// 空内容块数组
+	static Vector<freeMemory*> freeMemoryArr;
+	// 第几块内存的起始
+	static std::map<int, int> fileToVec;
+	// 数组模拟链表
+	static FileTree* fileTree;
 public:
-	//添加文件
-	bool addFile(CCString name);
-	//添加文件夹
-	bool addCatalog(CCString name);
-	//检查名字是否合法
-	bool checkName(CCString name);
-	//删除文件夹
-	void deleteCatalog(int num);
-	//删除文件
-	void deleteFile(int num);
-	//更新文件夹结构
-	void addList(int num);
-	//分配内存
-	int findAdress(int size);
+	System();
+	~System();
 public:
-	//更新视图
-	void updataView();
+	int getMemoryLarge();
+	void setFileVec(Vector<SystemFile*> fileVec);
+	Vector<SystemFile*> getFileVec();
+	void setFreeMemoryArr(Vector<freeMemory*> freeMemoryArr);
+	Vector<freeMemory*> getFreeMemoryArr();
+	void setFileToVec(std::map<int, int> fileToVec);
+	std::map<int, int> getFileToVec();
+	FileTree* getFileTree();
+public:
+	static void createMySelf();
+	bool reduceMemoryLarge(int size);
+	void addMemoryLarge(int size);
 };
 
 
-//文件(夹)类
-class File:
-	public Sprite
+System::System()
 {
-/*
-	type = 0为目录 type = 1为文件
-	目录没有大小 
-	文件有大小
-*/
-private:
-	//名字
-	CCString name;
-	int type;
-	//内存中的起始地址
-	int adress;
-	//内存中所占的大小
-	int memoryLong;
-	//是否被删除了
-	bool isLive;
-	//是第几个文件(夹)
-	int num;
-	//文件(夹)路径
-	string path;
-	//是否是根文件夹
-	bool isRoot;
-public:
-	File(CCString name,int type, int adress, int memoryLong);
-	File();
-	~File();
-public:
-	void setName(CCString name);
-	CCString getName();
-	void setType(int type);
-	int getType();
-	void setAdress(int adress);
-	int getAdress();
-	void setMemoryLong(int memoryLong);
-	int getMemoryLong();
-	void setIsLive(bool isLive);
-	bool getIsLive();
-	CCString getFile();
-	void setNum(int num);
-	int getNum();
-	void setPath(string fathrePath);
-	string getPath();
-	void setIsRoot(bool isRoot);
-	bool getIsRoot();
-};
+}
 
-//删除文件
-void ViewLayer::deleteFile(int num)
+System::~System()
 {
-	//硬盘上删除该文件
-	File* file = fileVec.at(num);
-	file->setIsLive(false);
-	string filename = file->getPath();
-	filename = filename + ".txt";
-	string command = "del " + filename;
+}
+
+void System::createMySelf()
+{
+	system("cd c:\\");
+
+	// 初始化变量
+	memoryLarge = 1048576;
+	freeMemory *freememory = new freeMemory(0, memoryLarge, 0);
+	freeMemoryArr.pushBack(freememory);
+
+	// 新建根目录
+	Folder * folder = new Folder(0, (CCString*) "workRoom", "c:", true);
+	fileVec.pushBack(folder);
+	string command = "md " + folder->getPath();
 	system(command.c_str());
+}
 
-	//维护内存块
-	bool flag = true;
-	int position = fileToVec[num];
-	freeMemoryArr.at(position)->setType(0);
-
-	int behind = position - 1;
-	while (behind > 1 && freeMemoryArr.at(behind)->getType() == 2)
+bool System::reduceMemoryLarge(int size)
+{
+	if (this->memoryLarge >= size) 
 	{
-		behind--;
+		this->memoryLarge -= size;
+		return true;
 	}
-	int front = position + 1;
-	while (front + 1 < freeMemoryArr.size() && freeMemoryArr.at(front)->getType() == 2)
+	else 
 	{
-		front++;
-	}
-
-	if (behind >= 0 && freeMemoryArr.at(behind)->getType() == 0)
-	{
-		freeMemoryArr.at(behind)->setLong(freeMemoryArr.at(behind)->getLong() + fileVec.at(num)->getMemoryLong());
-		freeMemoryArr.at(position)->setType(2);
-		flag = false;
-	}
-	if (front < freeMemoryArr.size() && freeMemoryArr.at(front)->getType() == 0)
-	{
-		if (!flag)
-		{
-			freeMemoryArr.at(behind)->setLong(freeMemoryArr.at(behind)->getLong() + freeMemoryArr.at(front)->getLong());
-			freeMemoryArr.at(position)->setType(2);
-			freeMemoryArr.at(front)->setType(2);
-		}
-		else
-		{
-			freeMemoryArr.at(position)->setLong(freeMemoryArr.at(position)->getLong() + freeMemoryArr.at(front)->getLong());
-			freeMemoryArr.at(front)->setType(2);
-		}
+		return false;
 	}
 }
 
-//新建文件
-bool ViewLayer::addFile(CCString name)
+void System::addMemoryLarge(int size)
 {
-	//在硬盘上创建该文件
-	File * file = new File(name,1, 0, 0);
-	file->setPath(newfile->getPath());
-	string nameStr = file->getPath();
-	string filename = nameStr + ".txt";
-
-	//将内容写入该文件
-	freopen(filename.c_str(), "w", stdout);
-	cout << file->getName().getCString() << ".txt" << endl;
-	fclose(stdout);
-
-	//获取文件的大小
-	const char *filepath = filename.c_str();
-	struct _stat info;
-	_stat(filepath, &info);
-	int size = info.st_size;
-
-	int adress = findAdress(size);
-	//满足内存限制
-	if (adress != -1)
-	{
-		//处理内存块
-		int s = freeMemoryArr.at(adress)->getStart();
-		int l = freeMemoryArr.at(adress)->getLong();
-		freeMemoryArr.at(adress)->setLong(size);
-		freeMemoryArr.at(adress)->setType(1);
-		freeMemory *f = new freeMemory(s + size, l - size, 0);
-		freeMemoryArr.insert(adress + 1, f);
-
-		//处理file信息
-		memoryLarge -= size;
-		fileVec.pushBack(file);
-		file->setNum(fileVec.size() - 1);
-		addList(file->getNum());
-		file->setMemoryLong(size);
-		file->setAdress(freeMemoryArr.at(adress)->getStart());
-		fileToVec[file->getNum()] = adress;
-	}
-	//不满足内存限制
-	else
-	{
-		string command = "del " + filename;
-		system(command.c_str());
-		file->setIsLive(false);
-		return false;
-	}
-	return true;
+	this->memoryLarge += size;
 }
 
 ```
 
-### 界面展示
-+ **文件夹页面介绍**<p>![pic0](http://o8efk558i.bkt.clouddn.com/main.png)
-+ **文件页面介绍**<p>![pic01](http://o8efk558i.bkt.clouddn.com/main2.png)
-+ **进入程序，程序会在c盘下建立workRoom文件夹**<p>![pic1](http://o8efk558i.bkt.clouddn.com/pic1.png)
-+ **新建一个名为a的文件（可以看到剩余空间变小）**</p>![pic2](http://o8efk558i.bkt.clouddn.com/pic2.png)
-+ **打开这个文件，可以看见文本内容，在内存中的地址，所占空间**![pic3](http://o8efk558i.bkt.clouddn.com/pic3.png)
-+ **修改这个文件的文本内容，并点击保存**![pic4](http://o8efk558i.bkt.clouddn.com/pic4.png)
-+ **新建一个名为bb的文件夹**</p>![pic5](http://o8efk558i.bkt.clouddn.com/pic5.png)
-+ **进入bb文件夹（可以看到路径会随之变化）**![pic6](http://o8efk558i.bkt.clouddn.com/pic6.png)
-+ **可以看到本地 c:\workRoom 文件夹当中有我们新建的文件**![pic7](http://o8efk558i.bkt.clouddn.com/pic7.png)
-+ **在该路径下新建名为lalalalalala的文件**![pic8](http://o8efk558i.bkt.clouddn.com/pic8.png)
-+ **打开这个文件，可以看见文本内容，在内存中的地址，所占空间**![pic9](http://o8efk558i.bkt.clouddn.com/pic9.png)
-+ **退回到文件夹中，按删除按钮删除该文件**![pic10](http://o8efk558i.bkt.clouddn.com/pic10.png)
-+ **点击退回按钮，退回到 c:\workRoom 文件夹下**![pic11](http://o8efk558i.bkt.clouddn.com/pic11.png)
-+ **输入文件夹名后点击文件夹删除按钮删除bb文件夹**![pic12](http://o8efk558i.bkt.clouddn.com/pic12.png)
-+ **输入文件夹名后点击文件夹建立按钮建立haha文件夹**![pic13](http://o8efk558i.bkt.clouddn.com/pic13.png)
-+ **进入haha文件夹下建立lalalalalala文件**![pic14](http://o8efk558i.bkt.clouddn.com/pic14.png)
-+ **点击格式化按钮，格式化 c:\workRoom 文件夹，并退回到 c:\workRoom 文件夹下**![pic15](http://o8efk558i.bkt.clouddn.com/pic15.png)
-+ **新建lalalala文件和hahaha文件夹**![pic16](http://o8efk558i.bkt.clouddn.com/pic16.png)
-+ **点开本地 c:\workRoom 文件夹，可以看到现在的所有文件**![pic17](http://o8efk558i.bkt.clouddn.com/pic17.png)
+### CreateFolderButton类
+```C++
+class CreateFolderButton :
+	public MyButton
+{
+private:
+	ViewLayer* viewLayer;
+public:
+	CreateFolderButton(ViewLayer* viewLayer, Menu* menuButton, int positionX, int positionY);
+	~CreateFolderButton();
+public:
+	void event(cocos2d::Ref* pSender);
+	void createMySelf(Menu* menuButton, int positionX, int positionY);
+};
+
+
+void CreateFolderButton::event(cocos2d::Ref* pSender)
+{
+	const string folderStr = this->viewLayer->catalogTTF->getString();
+	CCString* folderName = CCString::create(folderStr);
+	ViewSystem* viewSystem = new ViewSystem();
+	Folder* folder = new Folder();
+	Folder* fromFolder = (Folder*) viewSystem->getFromFile();
+
+	if (folder->createFolder(fromFolder, folderName))
+	{
+		//CCLOG("success");
+		this->viewLayer->updataView();
+	}
+}
+
+void CreateFolderButton::createMySelf(Menu* menuButton, int positionX, int positionY)
+{
+	auto clickCatalogButton = MenuItemImage::create("addButton.png", "addButton.png",
+		CC_CALLBACK_1(this->event, this));
+	clickCatalogButton->setPosition(positionX, positionY);
+	clickCatalogButton->setScale(1.6);
+	menuButton->addChild(clickCatalogButton);
+}
+
+CreateFolderButton::CreateFolderButton(ViewLayer* viewLayer, Menu* menuButton, int positionX, int positionY)
+{
+	this->viewLayer = viewLayer;
+	createMySelf(menuButton, positionX, positionY);
+}
+
+CreateFolderButton::~CreateFolderButton()
+{
+
+}
+
+```
+
+### SystemFile类
+```C++
+class SystemFile:
+	public Sprite
+{
+protected:
+	// 在system中的index
+	int headIndex;
+	// 文件名
+	CCString* name;
+	// 是否有效
+	bool isLive;
+	// 真实文件路径
+	string path;
+	// 是否是系统的根节点
+	bool isRoot;
+	// 文件类型
+	int type;
+public:
+	SystemFile();
+	~SystemFile();
+public:
+	void setType(int type);
+	int getType();
+	void setName(CCString* name);
+	CCString* getName();
+	void setIsLive(bool isLive);
+	bool getIsLive();
+	void setPath(string fathrePath);
+	string getPath();
+	void setHeadIndex(int headIndex);
+	int getHeadIndex();
+	void setIsRoot(bool isRoot);
+	bool getIsRoot();
+public:
+	// 删除自己
+	virtual void deleteSelf();
+};
+
+
+SystemFile::SystemFile()
+{
+}
+
+SystemFile::~SystemFile()
+{
+}
+
+void SystemFile::setType(int type)
+{
+	this->type = type;
+}
+
+int SystemFile::getType()
+{
+	return this->type;
+}
+
+void SystemFile::setName(CCString* name)
+{
+	this->name = name;
+}
+
+CCString* SystemFile::getName()
+{
+	return this->name;
+}
+
+void SystemFile::setIsLive(bool isLive)
+{
+	this->isLive = isLive;
+}
+
+bool SystemFile::getIsLive()
+{
+	return isLive;
+}
+
+void SystemFile::setPath(string fathrePath)
+{
+	fathrePath = fathrePath + "\\";
+	path = fathrePath + name->getCString();
+}
+
+string SystemFile::getPath()
+{
+	return this->path;
+}
+
+void SystemFile::setHeadIndex(int headIndex)
+{
+	this->headIndex = headIndex;
+}
+
+int SystemFile::getHeadIndex()
+{
+	return this->headIndex;
+}
+
+void SystemFile::deleteSelf()
+{
+
+}
+
+void SystemFile::setIsRoot(bool isRoot)
+{
+	this->isRoot = isRoot;
+}
+
+bool SystemFile::getIsRoot()
+{
+	return isRoot;
+}
+
+```
+
+### SystemFileDector类
+```C++
+class SystemFileDecorator
+{
+private:
+	SystemFile* systemFile;
+public:
+	SystemFileDecorator(SystemFile* systemFile);
+	~SystemFileDecorator();
+	// 检查name是否是儿子节点的名字(不允许一个儿子节点下同名)
+	bool checkName(CCString* name);
+	// 寻找系统中的内存最适空闲位置
+	int findAdress(int size);
+};
+
+SystemFileDecorator::SystemFileDecorator(SystemFile* systemFile)
+{
+	this->systemFile = systemFile;
+}
+
+SystemFileDecorator::~SystemFileDecorator()
+{
+
+}
+
+bool SystemFileDecorator::checkName(CCString* name)
+{
+	// 获取系统信息
+	System* system = new System();
+	FileTree* fileTree = system->getFileTree();
+	int* head = fileTree->head;
+	linkItem* link = fileTree->fileArr;
+	Vector<SystemFile*> fileVec = system->getFileVec();
+
+	// 查看是否重名
+	int p = head[this->systemFile->getHeadIndex()];
+	while (p != 0)
+	{
+		string nameStr = name->getCString();
+		string getnameStr = system->getFileVec.at(link[p].num)->getName().getCString();
+		if (nameStr == getnameStr && system->getFileVec.at(link[p].num)->getIsLive())
+		{
+			return false;
+		}
+		p = link[p].ne;
+	}
+	return true;
+}
+
+int SystemFileDecorator::findAdress(int size)
+{
+	System* system = new System();
+	Vector<freeMemory*> freeMemoryArr = system->getFreeMemoryArr();
+	int p = 0, q = -1;
+	int min = 10000000;
+	for (auto &e : freeMemoryArr)
+	{
+		if (e->getLong() >= size && e->getLong() <= min && e->getType() == 0)
+		{
+			min = e->getLong();
+			q = p;
+		}
+		p++;
+	}
+	return q;
+}
+```
+
+### ButtonFactory 类
+```C++
+class  ButtonFactory
+{
+public:
+	ButtonFactory();
+	~ButtonFactory();
+	MyButton* createButton(int type, ViewLayer* viewLayer, Menu* menuButton, int positionX, int positionY);
+};
+
+ButtonFactory::ButtonFactory()
+{
+}
+
+ButtonFactory::~ButtonFactory()
+{
+}
+
+MyButton* ButtonFactory::createButton(int type, ViewLayer* viewLayer, Menu* menuButton, int positionX, int positionY)
+{
+	MyButton* button = NULL;
+	switch (type)
+	{
+		case 0:
+		{
+			button = new BackOffButton(viewLayer, menuButton, positionX, positionY);
+			break;
+		}
+		case 1:
+		{
+			button = new ClearButton(viewLayer, menuButton, positionX, positionY);
+			break;
+		}
+		case 2:
+		{
+			button = new CreateDocumentButton(viewLayer, menuButton, positionX, positionY);
+			break;
+		}
+		case 3:
+		{
+			button = new CreateFolderButton(viewLayer, menuButton, positionX, positionY);
+			break;
+		}
+		case 4:
+		{
+			button = new DeleteFolderButton(viewLayer, menuButton, positionX, positionY);
+			break;
+		}
+		case 5:
+		{
+			button = new DeleteDocumentButton(viewLayer, menuButton, positionX, positionY);
+			break;
+		}
+		case 6:
+		{
+			button = new EnterFolderButton(viewLayer, menuButton, positionX, positionY);
+			break;
+		}
+		case 7:
+		{
+			button = new EnterDocumentButton(viewLayer, menuButton, positionX, positionY);
+			break;
+		}
+		default:
+			break;
+	}
+	return button;
+}
+```
+
+## Director单例方法
+
+```C++
+Director* Director::getInstance()
+{
+    if (!s_SharedDirector)
+    {
+        s_SharedDirector = new (std::nothrow) DisplayLinkDirector();
+        CCASSERT(s_SharedDirector, "FATAL: Not enough memory");
+        s_SharedDirector->init();
+    }
+
+    return s_SharedDirector;
+}
+```
