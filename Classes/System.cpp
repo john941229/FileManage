@@ -2,44 +2,46 @@
 
 System::System()
 {
-	system("cd c:\\");
-
-	// 初始化变量
-	memoryLarge = 1048576;
-	memset(head, 0, sizeof(head));
-	fileArrNum = 0;
-	freeMemory *freememory = new freeMemory(0, memoryLarge, 0);
-	freeMemoryArr.pushBack(freememory);
-
-	// 新建根目录
-	Folder * folder = new Folder(this, fileVec.size(), "workRoom", "c:", true);
-	fileVec.pushBack(folder);
-	string command = "md " + folder->getPath();
-	system(command.c_str());
 }
 
 System::~System()
 {
 }
 
-int* System::getHead()
+void System::createMySelf()
 {
-	return this->head;
+	system("cd c:\\");
+
+	// 初始化变量
+	memoryLarge = 1048576;
+	freeMemory *freememory = new freeMemory(0, memoryLarge, 0);
+	freeMemoryArr.pushBack(freememory);
+
+	// 新建根目录
+	Folder * folder = new Folder(0, (CCString*) "workRoom", "c:", true);
+	fileVec.pushBack(folder);
+	string command = "md " + folder->getPath();
+	system(command.c_str());
+}
+
+void System::setFreeMemoryArr(Vector<freeMemory*> freeMemoryArr)
+{
+	this->freeMemoryArr = freeMemoryArr;
+}
+
+void System::setFileToVec(std::map<int, int> fileToVec)
+{
+	this->fileToVec = fileToVec;
+}
+
+void System::setFileVec(Vector<SystemFile*> fileVec)
+{
+	this->fileVec = fileVec;
 }
 
 Vector<SystemFile*> System::getFileVec()
 {
 	return this->fileVec;
-}
-
-linkItem* System::getFileArr()
-{
-	return this->fileArr;
-}
-
-int System::getFileArrNum()
-{
-	return this->fileArrNum;
 }
 
 Vector<freeMemory*> System::getFreeMemoryArr() 
@@ -63,4 +65,19 @@ bool System::reduceMemoryLarge(int size)
 	{
 		return false;
 	}
+}
+
+void System::addMemoryLarge(int size)
+{
+	this->memoryLarge += size;
+}
+
+FileTree* System::getFileTree()
+{
+	return this->fileTree;
+}
+
+int System::getMemoryLarge()
+{
+	return this->memoryLarge;
 }

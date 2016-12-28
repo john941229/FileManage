@@ -2,7 +2,6 @@
 
 ViewSystem::ViewSystem()
 {
-	this->visibleSize = Director::getInstance()->getVisibleSize();
 }
 
 ViewSystem::~ViewSystem()
@@ -10,9 +9,9 @@ ViewSystem::~ViewSystem()
 
 }
 
-Size ViewSystem::getVisibleSize()
+void ViewSystem::createMySelf()
 {
-	return this->visibleSize;
+	visibleSize = Director::getInstance()->getVisibleSize();
 }
 
 SystemFile* ViewSystem::getNowFile()

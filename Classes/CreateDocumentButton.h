@@ -3,6 +3,7 @@
 #include "MyButton.h"
 #include "System.h"
 #include "ViewSystem.h"
+#include "ViewLayer.h"
 
 USING_NS_CC;
 using namespace std;
@@ -10,8 +11,10 @@ using namespace std;
 class CreateDocumentButton :
 	public MyButton
 {
+private:
+	ViewLayer* viewLayer;
 public:
-	CreateDocumentButton(Menu* menuButton, int positionX, int positionY);
+	CreateDocumentButton(ViewLayer* viewLayer, Menu* menuButton, int positionX, int positionY);
 	~CreateDocumentButton();
 public:
 	void event(cocos2d::Ref* pSender);

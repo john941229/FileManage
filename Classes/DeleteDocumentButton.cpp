@@ -8,7 +8,7 @@ void DeleteDocumentButton::event(cocos2d::Ref* pSender)
 	Vector<freeMemory*> freeMemoryArr = system->getFreeMemoryArr();
 
 	bool flag = false;
-	const string fileName = fileTTF->getString();
+	const string fileName = this->viewLayer->fileTTF->getString();
 	SystemFile* file = NULL;
 	
 	int num = 0;
@@ -27,7 +27,7 @@ void DeleteDocumentButton::event(cocos2d::Ref* pSender)
 	{
 		system->addMemoryLarge(freeMemoryArr.at(file->getHeadIndex())->getLong());
 		file->deleteSelf();
-		//updataView();
+		this->viewLayer->updataView();
 	}
 }
 
@@ -40,8 +40,9 @@ void DeleteDocumentButton::createMySelf(Menu* menuButton, int positionX, int pos
 	menuButton->addChild(clickCatalogButton);
 }
 
-DeleteDocumentButton::DeleteDocumentButton(Menu* menuButton, int positionX, int positionY)
+DeleteDocumentButton::DeleteDocumentButton(ViewLayer* viewLayer, Menu* menuButton, int positionX, int positionY)
 {
+	this->viewLayer = viewLayer;
 	createMySelf(menuButton, positionX, positionY);
 }
 

@@ -17,7 +17,7 @@ void ClearButton::event(cocos2d::Ref* pSender)
 		}
 	}
 
-	// updataView();
+	this->viewLayer->updataView();
 }
 
 void ClearButton::createMySelf(Menu* menuButton, int positionX, int positionY)
@@ -29,8 +29,9 @@ void ClearButton::createMySelf(Menu* menuButton, int positionX, int positionY)
 	menuButton->addChild(clickCatalogButton);
 }
 
-ClearButton::ClearButton(Menu* menuButton, int positionX, int positionY)
+ClearButton::ClearButton(ViewLayer* viewLayer, Menu* menuButton, int positionX, int positionY)
 {
+	this->viewLayer = viewLayer;
 	createMySelf(menuButton, positionX, positionY);
 }
 

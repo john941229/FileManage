@@ -44,7 +44,7 @@ bool AppDelegate::applicationDidFinishLaunching() {
 #else
         glview = GLViewImpl::create("FileManage");
 #endif
-        director->setOpenGLView(glview);
+        director->setOpenGLView(glview);       
     }
 
     // turn on display FPS

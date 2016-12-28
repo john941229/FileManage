@@ -1,7 +1,8 @@
 #include "DeleteFolderButton.h"
 
-DeleteFolderButton::DeleteFolderButton(Menu * menuButton, int positionX, int positionY)
+DeleteFolderButton::DeleteFolderButton(ViewLayer* viewLayer, Menu * menuButton, int positionX, int positionY)
 {
+	this->viewLayer = viewLayer;
 	createMySelf(menuButton, positionX, positionY);
 }
 
@@ -15,7 +16,7 @@ void DeleteFolderButton::event(cocos2d::Ref* pSender)
 	Vector<SystemFile*> fileVec = system->getFileVec();
 	SystemFile* file = NULL;
 
-	const string catalogName = catalogTTF->getString();
+	const string catalogName = this->viewLayer->catalogTTF->getString();
 	bool flag = false;
 	int num = 0;
 	for (auto &e : fileVec)
@@ -32,7 +33,7 @@ void DeleteFolderButton::event(cocos2d::Ref* pSender)
 	if (flag)
 	{
 		file->deleteSelf();
-		//updataView();
+		this->viewLayer->updataView();
 	}
 }
 

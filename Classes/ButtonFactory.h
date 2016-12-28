@@ -12,9 +12,8 @@
 
 class  ButtonFactory
 {
-private:
-	MyButton* createButton(int type, Menu* menuButton, int positionX, int positionY);
 public:
 	ButtonFactory();
 	~ButtonFactory();
+	MyButton* createButton(int type, ViewLayer* viewLayer, Menu* menuButton, int positionX, int positionY);
 };

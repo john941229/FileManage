@@ -2,7 +2,7 @@
 
 void CreateFolderButton::event(cocos2d::Ref* pSender)
 {
-	const string folderStr = catalogTTF->getString();
+	const string folderStr = this->viewLayer->catalogTTF->getString();
 	CCString* folderName = CCString::create(folderStr);
 	ViewSystem* viewSystem = new ViewSystem();
 	Folder* folder = new Folder();
@@ -11,7 +11,7 @@ void CreateFolderButton::event(cocos2d::Ref* pSender)
 	if (folder->createFolder(fromFolder, folderName))
 	{
 		//CCLOG("success");
-		//updataView();
+		this->viewLayer->updataView();
 	}
 }
 
@@ -24,8 +24,9 @@ void CreateFolderButton::createMySelf(Menu* menuButton, int positionX, int posit
 	menuButton->addChild(clickCatalogButton);
 }
 
-CreateFolderButton::CreateFolderButton(Menu* menuButton, int positionX, int positionY)
+CreateFolderButton::CreateFolderButton(ViewLayer* viewLayer, Menu* menuButton, int positionX, int positionY)
 {
+	this->viewLayer = viewLayer;
 	createMySelf(menuButton, positionX, positionY);
 }
 

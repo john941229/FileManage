@@ -4,6 +4,7 @@
 #include "System.h"
 #include "ViewSystem.h"
 #include "Folder.h"
+#include "ViewLayer.h"
 
 USING_NS_CC;
 using namespace std;
@@ -11,8 +12,10 @@ using namespace std;
 class CreateFolderButton :
 	public MyButton
 {
+private:
+	ViewLayer* viewLayer;
 public:
-	CreateFolderButton(Menu* menuButton, int positionX, int positionY);
+	CreateFolderButton(ViewLayer* viewLayer, Menu* menuButton, int positionX, int positionY);
 	~CreateFolderButton();
 public:
 	void event(cocos2d::Ref* pSender);

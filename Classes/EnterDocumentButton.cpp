@@ -1,7 +1,8 @@
 #include "EnterDocumentButton.h"
 
-EnterDocumentButton::EnterDocumentButton(Menu * menuButton, int positionX, int positionY)
+EnterDocumentButton::EnterDocumentButton(ViewLayer* viewLayer, Menu * menuButton, int positionX, int positionY)
 {
+	this->viewLayer = viewLayer,
 	createMySelf(menuButton, positionX, positionY);
 }
 
@@ -22,7 +23,7 @@ void EnterDocumentButton::event(cocos2d::Ref* pSender)
 	bool flag = false;
 	for (auto &e : fileVec)
 	{
-		if (e->getName()->getCString() == fileTTF->getString())
+		if (e->getName()->getCString() == this->viewLayer->fileTTF->getString())
 		{
 			nowFile = e;
 			flag = true;
@@ -38,6 +39,7 @@ void EnterDocumentButton::event(cocos2d::Ref* pSender)
 		fileshow->setFromNum(nowFile->getHeadIndex());
 		Director::getInstance()->getRunningScene()->addChild(fileshow);
 	}
+	this->viewLayer->updataView();
 }
 
 void EnterDocumentButton::createMySelf(Menu* menuButton, int positionX, int positionY)

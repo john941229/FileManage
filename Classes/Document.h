@@ -3,6 +3,7 @@
 #include "SystemFile.h"
 #include "System.h"
 #include "Folder.h"
+#include "SystemFileDecorator.h"
 #include <string>
 #include <cstdlib>
 #include <iostream> 
@@ -23,7 +24,7 @@ private:
 	int memoryLong;
 public:
 	Document();
-	Document(System* system, int headIndex, CCString name, string path, int adress, int memoryLong);
+	Document(int headIndex, CCString* name, string path, int adress, int memoryLong);
 	~Document();
 public:
 	void setAdress(int adress);
@@ -34,6 +35,6 @@ public:
 	void deleteSelf();
 public:
 	// 创建文件夹
-	static bool create(Folder* father, CCString name);
+	static bool create(Folder* father, CCString* name);
 };
 

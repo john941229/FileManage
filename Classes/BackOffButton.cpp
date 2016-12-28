@@ -9,7 +9,7 @@ void BackOffButton::event(cocos2d::Ref* pSender)
 	if (!nowFile->getIsRoot())
 	{
 		nowFile = fromFile;
-		//updataView();
+		this->viewLayer->updataView();
 	}
 	else
 	{
@@ -26,8 +26,9 @@ void BackOffButton::createMySelf(Menu* menuButton, int positionX, int positionY)
 	menuButton->addChild(clickCatalogButton);
 }
 
-BackOffButton::BackOffButton(Menu* menuButton, int positionX, int positionY)
+BackOffButton::BackOffButton(ViewLayer* viewLayer, Menu* menuButton, int positionX, int positionY)
 {
+	this->viewLayer = viewLayer;
 	createMySelf(menuButton, positionX, positionY);
 }
 

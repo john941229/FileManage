@@ -1,7 +1,8 @@
 #include "EnterFolderButton.h"
 
-EnterFolderButton::EnterFolderButton(Menu * menuButton, int positionX, int positionY)
+EnterFolderButton::EnterFolderButton(ViewLayer* viewLayer, Menu * menuButton, int positionX, int positionY)
 {
+	this->viewLayer = viewLayer;
 	createMySelf(menuButton, positionX, positionY);
 }
 
@@ -22,7 +23,7 @@ void EnterFolderButton::event(cocos2d::Ref* pSender)
 	fromFile = nowFile;
 	for (auto &e : fileVec)
 	{
-		if (e->getName()->getCString() == catalogTTF->getString())
+		if (e->getName()->getCString() == this->viewLayer->catalogTTF->getString())
 		{
 			nowFile = e;
 			flag = true;
@@ -31,7 +32,7 @@ void EnterFolderButton::event(cocos2d::Ref* pSender)
 	}
 	if (flag)
 	{
-		//updataView();
+		this->viewLayer->updataView();
 	}
 	else
 	{

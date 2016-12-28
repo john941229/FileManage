@@ -4,9 +4,9 @@ Document::Document()
 {
 }
 
-Document::Document(System* system, int headIndex, CCString name, string path, int adress, int memoryLong)
+Document::Document(int headIndex, CCString* name, string path, int adress, int memoryLong)
 {
-	this->system = system;
+	this->type = 1;
 	this->headIndex = headIndex;
 	this->name = name;
 	this->adress = adress;
@@ -41,12 +41,11 @@ int Document::getMemoryLong()
 
 void Document::deleteSelf()
 {
+	System* system = new System();
 	// 获取系统信息
-	int* head = this->system->getHead();
-	linkItem* link = this->system->getFileArr();
-	Vector<SystemFile*> fileVec = this->system->getFileVec();
-	Vector<freeMemory*> freeMemoryArr = this->system->getFreeMemoryArr();
-	std::map<int, int> fileToVec = this->system->getFileToVec();
+	Vector<SystemFile*> fileVec = system->getFileVec();
+	Vector<freeMemory*> freeMemoryArr = system->getFreeMemoryArr();
+	std::map<int, int> fileToVec = system->getFileToVec();
 
 	this->isLive = false;
 	// 硬盘上删除该文件
@@ -73,7 +72,7 @@ void Document::deleteSelf()
 
 	if (behind >= 0 && freeMemoryArr.at(behind)->getType() == 0)
 	{
-		freeMemoryArr.at(behind)->setLong(freeMemoryArr.at(behind)->getLong() + fileVec.at(num)->getMemoryLong());
+		freeMemoryArr.at(behind)->setLong(freeMemoryArr.at(behind)->getLong() + freeMemoryArr.at(position)->getLong());
 		freeMemoryArr.at(position)->setType(2);
 		flag = false;
 	}
@@ -93,27 +92,27 @@ void Document::deleteSelf()
 	}
 }
 
-bool Document::create(Folder* father, CCString name)
+bool Document::create(Folder* father, CCString* name)
 {
 	// 获取系统信息
-	System* thisSystem = father->getSystem();
-	int* head = thisSystem->getHead();
-	linkItem* link = thisSystem->getFileArr();
-	Vector<SystemFile*> fileVec = thisSystem->getFileVec();
-	int fileArrNum = thisSystem->getFileArrNum();
-	Vector<freeMemory*> freeMemoryArr = thisSystem->getFreeMemoryArr();
-	std::map<int, int> fileToVec = thisSystem->getFileToVec();
+	System* system = new System();
+	Vector<SystemFile*> fileVec = system->getFileVec();
+	Vector<freeMemory*> freeMemoryArr = system->getFreeMemoryArr();
+	std::map<int, int> fileToVec = system->getFileToVec();
+	FileTree* fileTree = system->getFileTree();
+	SystemFileDecorator* fatherDecorator = new SystemFileDecorator(father);
 
-	if (father->checkName(name))
+	if (fatherDecorator->checkName(name))
 	{
-		Document * doc = new Document(thisSystem, thisSystem->getFileVec.size(), name, father->getPath(), -1, 0);
+		Document * doc = new Document(system->getFileVec.size(), name, father->getPath(), -1, 0);
+		SystemFileDecorator* docDecorator = new SystemFileDecorator(doc);
 		// 在硬盘上创建该文件
 		string nameStr = doc->getPath();
 		string filename = nameStr + ".txt";
 
 		// 将内容写入该文件
 		freopen(filename.c_str(), "w", stdout);
-		cout << doc->getName().getCString() << ".txt" << endl;
+		cout << doc->getName()->getCString() << ".txt" << endl;
 		fclose(stdout);
 
 		// 获取文件的大小
@@ -122,7 +121,7 @@ bool Document::create(Folder* father, CCString name)
 		_stat(filepath, &info);
 		int size = info.st_size;
 
-		int adress = doc->findAdress(size);
+		int adress = docDecorator->findAdress(size);
 		// 满足内存限制
 		if (adress != -1)
 		{
@@ -135,7 +134,7 @@ bool Document::create(Folder* father, CCString name)
 			freeMemoryArr.insert(adress + 1, f);
 
 			// 处理doc的其他属性
-			thisSystem->reduceMemoryLarge(size);
+			system->reduceMemoryLarge(size);
 			fileVec.pushBack(doc);
 			father->addList(doc->getHeadIndex());
 			doc->setMemoryLong(size);

@@ -2,7 +2,7 @@
 
 void CreateDocumentButton::event(cocos2d::Ref* pSender)
 {
-	const string fileN = fileTTF->getString();
+	const string fileN = this->viewLayer->fileTTF->getString();
 	CCString* fileName = CCString::create(fileN);
 	ViewSystem* viewSystem = new ViewSystem();
 	Document* document = new Document();
@@ -11,7 +11,7 @@ void CreateDocumentButton::event(cocos2d::Ref* pSender)
 	if (document->create(fromFolder, fileName))
 	{
 		//CCLOG("success");
-		//updataView();
+		this->viewLayer->updataView();
 	}
 }
 
@@ -24,8 +24,9 @@ void CreateDocumentButton::createMySelf(Menu* menuButton, int positionX, int pos
 	menuButton->addChild(clickCatalogButton);
 }
 
-CreateDocumentButton::CreateDocumentButton(Menu* menuButton, int positionX, int positionY)
+CreateDocumentButton::CreateDocumentButton(ViewLayer* viewLayer, Menu* menuButton, int positionX, int positionY)
 {
+	this->viewLayer = viewLayer;
 	createMySelf(menuButton, positionX, positionY);
 }
 

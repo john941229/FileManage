@@ -3,6 +3,7 @@
 #include "MyButton.h"
 #include "System.h"
 #include "ViewSystem.h"
+#include "ViewLayer.h"
 
 USING_NS_CC;
 using namespace std;
@@ -10,8 +11,10 @@ using namespace std;
 class BackOffButton :
 	public MyButton
 {
+private:
+	ViewLayer* viewLayer;
 public:
-	BackOffButton(Menu* menuButton, int positionX, int positionY);
+	BackOffButton(ViewLayer* viewLayerm, Menu* menuButton, int positionX, int positionY);
 	~BackOffButton();
 public:
 	void event(cocos2d::Ref* pSender);

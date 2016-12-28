@@ -3,6 +3,7 @@
 #include "MyButton.h"
 #include "System.h"
 #include "ViewSystem.h"
+#include "ViewLayer.h"
 
 USING_NS_CC;
 using namespace std;
@@ -10,8 +11,10 @@ using namespace std;
 class EnterFolderButton :
 	public MyButton
 {
+private:
+	ViewLayer* viewLayer;
 public:
-	EnterFolderButton(Menu* menuButton, int positionX, int positionY);
+	EnterFolderButton(ViewLayer* viewLayer, Menu* menuButton, int positionX, int positionY);
 	~EnterFolderButton();
 public:
 	void event(cocos2d::Ref* pSender);
