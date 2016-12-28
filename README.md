@@ -24,9 +24,7 @@
 + 重构后的ViewLayer类的代码量
 	+ ![p5](http://ogbr04z2c.bkt.clouddn.com/p5.png) 
 + 重构后的类图
-	+ ![p6](http://ogbr04z2c.bkt.clouddn.com/p6.png)
-+ 重构后的结构图
-	+ ![p9](http://ogbr04z2c.bkt.clouddn.com/p9.png)  
+	+ ![p6](http://ogbr04z2c.bkt.clouddn.com/p6.png)  
 
 ## 设计模式
 + 工厂模式
@@ -430,7 +428,7 @@ MyButton* ButtonFactory::createButton(int type, ViewLayer* viewLayer, Menu* menu
 }
 ```
 
-## Director单例方法
+### Director单例方法
 
 ```C++
 Director* Director::getInstance()
