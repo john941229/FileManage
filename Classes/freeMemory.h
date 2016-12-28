@@ -1,5 +1,5 @@
 #pragma once
-#include "C:\MyCocos\FileManage\cocos2d\cocos\2d\CCNode.h"
+#include "C:\fileManage\FileManage\cocos2d\cocos\2d\CCNode.h"
 #include <cocos2d.h>
 
 USING_NS_CC;

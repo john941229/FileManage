@@ -78,16 +78,6 @@ int File::getNum()
 	return this->num;
 }
 
-void File::setIsRoot(bool isRoot)
-{
-	this->isRoot = isRoot;
-}
-
-bool File::getIsRoot()
-{
-	return isRoot;
-}
-
 void File::setPath(string fathrePath)
 {
 	fathrePath = fathrePath + "\\";

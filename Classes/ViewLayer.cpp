@@ -120,6 +120,7 @@ void ViewLayer::initUI()
 	addFunctionButton();
 }
 
+// 已改写
 bool ViewLayer::init()
 {
 	system("cd c:\\");
@@ -145,6 +146,7 @@ bool ViewLayer::init()
 	return true;
 }
 
+// 已改写
 void ViewLayer::addList(int num)
 {
 	int nowNum = newfile->getNum();
@@ -154,6 +156,8 @@ void ViewLayer::addList(int num)
 	head[nowNum] = fileArrNum;
 }
 
+
+// 已改写
 bool ViewLayer::checkName(CCString name)
 {
 	int nowNum = newfile->getNum();
@@ -171,6 +175,7 @@ bool ViewLayer::checkName(CCString name)
 	return true;
 }
 
+// 已改写
 int ViewLayer::findAdress(int size)
 {
 	int p = 0, q = -1;
@@ -188,6 +193,7 @@ int ViewLayer::findAdress(int size)
 	return q;
 }
 
+// 已改写
 bool ViewLayer::addFile(CCString name)
 {
 	//在硬盘上创建该文件
@@ -239,6 +245,7 @@ bool ViewLayer::addFile(CCString name)
 	return true;
 }
 
+// 已改写
 bool ViewLayer::addCatalog(CCString name)
 {
 	if (checkName(name))
@@ -306,6 +313,7 @@ void ViewLayer::deleteFile(int num)
 	}
 }
 
+// 已改写
 void ViewLayer::deleteCatalog(int num)
 {
 	File* file = fileVec.at(num);

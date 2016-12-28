@@ -1,5 +1,5 @@
 #pragma once
-#include "C:\MyCocos\FileManage\cocos2d\cocos\2d\CCSprite.h"
+#include "C:\fileManage\FileManage\cocos2d\cocos\2d\CCSprite.h"
 #include <cocos2d.h>
 #include <iostream>
 
